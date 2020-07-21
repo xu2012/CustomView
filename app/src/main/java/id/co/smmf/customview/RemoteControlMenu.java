@@ -96,7 +96,9 @@ public class RemoteControlMenu extends CustomView {
         center_p.addCircle(0, 0, 0.2f * minWidth, Path.Direction.CW);
         center.setPath(center_p, globalRegion);
 
+        //画圆弧（矩形区域，开始角度，扫过角度）
         right_p.addArc(bigCircle, -40, bigSweepAngle);
+        //添加一个圆弧到path，如果圆弧的起点和上次最后一个坐标点不相同，就连接两个点
         right_p.arcTo(smallCircle, 40, smallSweepAngle);
         right_p.close();
         right.setPath(right_p, globalRegion);
@@ -121,8 +123,11 @@ public class RemoteControlMenu extends CustomView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float[] pts = new float[2];
-        pts[0] = event.getRawX();
-        pts[1] = event.getRawY();
+//        pts[0] = event.getRawX();
+//        pts[1] = event.getRawY();
+        pts[0] = event.getX();
+        pts[1] = event.getY();
+
         mMapMatrix.mapPoints(pts);
 
         int x = (int) pts[0];
@@ -166,15 +171,15 @@ public class RemoteControlMenu extends CustomView {
     // 获取当前触摸点在哪个区域
     int getTouchedPath(int x, int y) {
         if (center.contains(x, y)) {
-            return 0;
+            return CENTER;
         } else if (up.contains(x, y)) {
-            return 1;
+            return UP;
         } else if (right.contains(x, y)) {
-            return 2;
+            return RIGHT;
         } else if (down.contains(x, y)) {
-            return 3;
+            return DOWN;
         } else if (left.contains(x, y)) {
-            return 4;
+            return LEFT;
         }
         return -1;
     }
@@ -182,6 +187,7 @@ public class RemoteControlMenu extends CustomView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        //移动坐标系
         canvas.translate(mViewWidth / 2, mViewHeight / 2);
 
         // 获取测量矩阵(逆矩阵)
